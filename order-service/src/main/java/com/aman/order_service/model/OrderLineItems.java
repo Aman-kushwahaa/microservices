@@ -15,11 +15,21 @@ import java.math.BigDecimal;
 
 public class OrderLineItems {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//    private String skuCode;
+//    private BigDecimal price;
+//    private int quantity;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "order_id")
+//    private Order order;
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
     private String skuCode;
     private BigDecimal price;
-    private int quantity;
+    private Integer quantity;
 
 }

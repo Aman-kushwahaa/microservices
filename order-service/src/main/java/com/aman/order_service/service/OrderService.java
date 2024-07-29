@@ -8,6 +8,8 @@ import com.aman.order_service.model.Order;
 import com.aman.order_service.model.OrderLineItems;
 import com.aman.order_service.repo.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -20,14 +22,16 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
+
+    Logger logger = LoggerFactory.getLogger(OrderService.class);
 
 
     public void placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
         List<OrderLineItems> orderLineItems = orderRequest
-                .getOrderLineItemsDto()
+                .getOrderLineItemsDtoList()
                 .stream()
                 .map(this::mapToDto).
                 toList();
@@ -36,18 +40,20 @@ public class OrderService {
        List<String> skuCodes= order.getOrderLineItemsList().stream().map(OrderLineItems::getSkuCode).toList();
 
         //call inventory service and place order if product is available in stock
-        InventoryResponse[] inventoryResponseArray = webClient
+        InventoryResponse[] inventoryResponseArray = webClientBuilder.build()
                 .get()
-                .uri("http://localhost:8082/api/inventory",
+                .uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode",skuCodes).build())
                 .retrieve()
-                .bodyToFlux(InventoryResponse[].class).blockFirst();
+                .bodyToMono(InventoryResponse[].class).block();
 
-        assert inventoryResponseArray != null;
+
+
         boolean allProductsInStock = Arrays.stream(inventoryResponseArray)
                 .allMatch(InventoryResponse::getIsInStock);
         if (allProductsInStock) {
             orderRepository.save(order);
+
         } else {
             throw new IllegalArgumentException("Product is not in stock , pleas try again later");
     }

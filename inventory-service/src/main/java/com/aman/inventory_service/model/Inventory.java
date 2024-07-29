@@ -12,6 +12,7 @@ import lombok.Setter;
 @Table(name = "t_inventory")
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Inventory {
 
     @Id

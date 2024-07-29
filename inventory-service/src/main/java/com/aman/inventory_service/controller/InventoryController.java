@@ -18,6 +18,8 @@ public class InventoryController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<InventoryResponse> isInStock(@RequestParam List<String> skuCode){
+        System.out.println("IsintStkc called");
+        System.out.println(inventoryService.isInStock(skuCode));
         return  inventoryService.isInStock(skuCode);
 
 
