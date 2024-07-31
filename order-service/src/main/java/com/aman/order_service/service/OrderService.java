@@ -27,7 +27,7 @@ public class OrderService {
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
 
-    public void placeOrder(OrderRequest orderRequest) {
+    public String placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
         List<OrderLineItems> orderLineItems = orderRequest
@@ -53,6 +53,7 @@ public class OrderService {
                 .allMatch(InventoryResponse::getIsInStock);
         if (allProductsInStock) {
             orderRepository.save(order);
+            return "Order plcaed successfully";
 
         } else {
             throw new IllegalArgumentException("Product is not in stock , pleas try again later");
