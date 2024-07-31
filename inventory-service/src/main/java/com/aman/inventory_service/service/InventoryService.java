@@ -21,13 +21,11 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
 
     Logger logger = LoggerFactory.getLogger(InventoryService.class);
-    @SneakyThrows //not for production
+   //not for production
     @Transactional(readOnly = true)
     public List<InventoryResponse> isInStock(List<String> skuCode)  {
-        //reproducing slow response
-        logger.info("wait started");
-        Thread.sleep(10000);
-        logger.info("wait ended");
+
+
 
         List<Inventory> inventories = inventoryRepository.findBySkuCodeIn(skuCode);
         logger.info(inventories.toString());
