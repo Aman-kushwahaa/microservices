@@ -25,7 +25,7 @@ public class OrderController {
     Logger logger = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
 
-    @CircuitBreaker(name ="inventory",fallbackMethod = "fallbackMethod")
+    @CircuitBreaker(name ="inventory",fallbackMethod = "fallbackMethod" )
     @TimeLimiter(name = "inventory")
     @Retry(name="inventory")
     @PostMapping
